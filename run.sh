@@ -1,7 +1,7 @@
 #!/bin/bash
 
-chmod +x ./config.sh
-. ./config.sh
+chmod +x config.sh
+. config.sh
 
 MIN_SNR=-10
 MAX_SNR=20
