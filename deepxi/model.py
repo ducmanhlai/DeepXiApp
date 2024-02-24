@@ -298,7 +298,8 @@ class DeepXi():
 						save_mat(out_path + '/' + base_name + '.mat', mag_hat, 'mag_hat')
 					elif out_type == 'y':
 						y = self.inp_tgt.enhanced_speech(inp, supplementary, tgt_hat, g).numpy()
-						save_wav(out_path + '/' + base_name + '.wav', y, self.inp_tgt.f_s)
+						# save_wav(out_path + '/' + base_name + '.wav', y, self.inp_tgt.f_s)
+						return y
 					elif out_type == 'deepmmse':
 						xi_hat = self.inp_tgt.xi_hat(tgt_hat)
 						d_PSD_hat = np.multiply(np.square(inp), gfunc(xi_hat, xi_hat+1.0,

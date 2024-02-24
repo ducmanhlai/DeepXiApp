@@ -3,3 +3,4 @@ tensorflow-addons
 tqdm
 pysoundfile
 scipy
+flask

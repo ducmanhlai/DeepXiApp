@@ -83,7 +83,7 @@ deepxi = DeepXi(
     map_type="DBNormalCDF",
     map_params=[None, None],
 )
-deepxi.infer(
+a= deepxi.infer(
 		test_x=test_x,
 		test_x_len=test_x_len,
 		test_x_base_names=test_x_base_names,
