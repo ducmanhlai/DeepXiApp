@@ -22,3 +22,4 @@ RUN pip install -r requirements.txt
 # Default command when container starts
 CMD ["bash"]
 # CMD ['./run.sh VER="mhanet-1.1c" INFER=1 GAIN="mmse-lsa"']
+EXPOSE 80
