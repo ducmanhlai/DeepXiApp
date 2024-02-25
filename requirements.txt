@@ -3,4 +3,5 @@ tensorflow-addons
 tqdm
 pysoundfile
 scipy
+librosa
 flask

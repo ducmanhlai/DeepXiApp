@@ -1,9 +1,11 @@
+import base64
 from flask import Flask,render_template,request, jsonify
 import numpy as np
 from scipy.io import wavfile
 from io import BytesIO
 import os
 import soundfile as sf
+import io
 import librosa
 from werkzeug.datastructures import FileStorage
 from predict import predict
@@ -34,7 +36,11 @@ def upload_file():
             os.remove('./upload/'+file.filename)
             test_x, test_x_len, _, test_x_base_names = Batch('./upload')
             prediction = predict(test_x,test_x_len,test_x_base_names)
-            return jsonify({'prediction': [1]})
+            byte_io = io.BytesIO()
+            wavfile.write(byte_io, sr, prediction[0])
+            audio_data = base64.b64encode(wav_bytes).decode('UTF-8')
+            wav_bytes = byte_io.read()
+            return audio_data
         except Exception as e:
             return jsonify({'error': str(e)})
 if __name__ == '__main__':
