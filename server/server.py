@@ -2,8 +2,12 @@ from flask import Flask,render_template,request, jsonify
 import numpy as np
 from scipy.io import wavfile
 from io import BytesIO
+import os
+import soundfile as sf
 import librosa
+from werkzeug.datastructures import FileStorage
 from predict import predict
+from deepxi.se_batch import Batch
 app = Flask(__name__)
 
 @app.route('/')
@@ -21,16 +25,16 @@ def upload_file():
 
     if file:
         try:
-            # Convert MP3 file to numpy array
-            mp3_bytes = file.read()
-            wav_bytes = BytesIO(mp3_bytes)
-            sr, data = wavfile.read(wav_bytes)
-             # Chuyển đổi sang mono
-            signal_mono = librosa.to_mono(data)
-    # Chuyển đổi sample rate
+            file.save(os.path.join('./upload/', file.filename))
+            audio, sr = librosa.load(os.path.join('./upload/', file.filename))
+            signal_mono= librosa.to_mono(audio)
             signal_resampled = librosa.resample(signal_mono,orig_sr = sr,target_sr= 16000)
-            prediction= predict(signal_resampled,1,file.filename)
-            return jsonify({'prediction': prediction.tolist()})
+            output_path = os.path.join('./upload/', file.filename.split(".")[0] + ".wav")
+            sf.write(output_path, signal_resampled, 16000, format= 'wav')
+            os.remove('./upload/'+file.filename)
+            test_x, test_x_len, _, test_x_base_names = Batch('./upload')
+            prediction = predict(test_x,test_x_len,test_x_base_names)
+            return jsonify({'prediction': [1]})
         except Exception as e:
             return jsonify({'error': str(e)})
 if __name__ == '__main__':

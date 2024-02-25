@@ -28,7 +28,7 @@
             <h2>Demo</h2>
             <div class="input-group">
                 <input type="file" class="form-control" id="audio-file" aria-describedby="inputGroupFileAddon03"
-                    aria-label="Upload"/>
+                    aria-label="Upload" />
                 <button class="btn btn-outline-secondary" type="button" id="btn-submit">Xử lí</button>
             </div>
             <div class="result">
@@ -44,11 +44,15 @@
         const button = document.querySelector('#btn-submit');
         const audioFile = document.querySelector('#audio-file');
         button.addEventListener('click', () => {
-            console.log('click')
+            let formData = new FormData();
+            formData.append('file', audioFile.files[0]);
+            axios.post('/upload',formData).then((data)=>{
+                console.log(data)
+            }).catch(err=>{
+                console.log('err')
+            })
         })
-        // axios.post('/').then().catch(err=>{
-        //     console.log('err')
-        // })
+
     </script>
 </body>
 
