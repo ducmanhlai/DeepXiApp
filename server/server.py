@@ -1,5 +1,6 @@
 import base64
-from flask import Flask,render_template,request, jsonify, se
+import json
+from flask import Flask,render_template,request, jsonify, send_file
 import numpy as np
 from scipy.io import wavfile
 from io import BytesIO
@@ -36,11 +37,15 @@ def upload_file():
             os.remove('./upload/'+file.filename)
             test_x, test_x_len, _, test_x_base_names = Batch('./upload')
             prediction = predict(test_x,test_x_len,test_x_base_names)
-            byte_io = io.BytesIO()
-            wavfile.write(byte_io, sr, prediction)
-            audio_data = base64.b64encode(wav_bytes).decode('UTF-8')
-            wav_bytes = byte_io.read()
-            return send_file(io.BytesIO(audio_data), mimetype='audio/wav')
+            wav = np.squeeze(prediction)
+            if isinstance(wav[0], np.float32):
+                wav = np.asarray(np.multiply(wav, 32768.0), dtype=np.int16)
+            audio_data = base64.b64encode(wav).decode('UTF-8')
+            data = {"snd": audio_data}
+            res = app.response_class(response=json.dumps(data),
+                    status=200,
+                     mimetype='application/json')
+            return res
         except Exception as e:
             return jsonify({'error': str(e)})
 if __name__ == '__main__':

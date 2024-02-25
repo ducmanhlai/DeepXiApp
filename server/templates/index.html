@@ -31,6 +31,7 @@
                     aria-label="Upload" />
                 <button class="btn btn-outline-secondary" type="button" id="btn-submit">Xử lí</button>
             </div>
+            <audio src="data:audio/wav;base64" preload="auto" id="audio"></audio>
             <div class="result">
                 <p>Đang xử lý...</p>
             </div>
@@ -46,12 +47,56 @@
         button.addEventListener('click', () => {
             let formData = new FormData();
             formData.append('file', audioFile.files[0]);
-            axios.post('/upload',formData).then((data)=>{
-                console.log(data)
-            }).catch(err=>{
-                console.log('err')
+            axios.post('/upload', formData).then((res) => {
+                console.log(res.data)
+                document.querySelector('#audio').src = "data:audio/wav;base64, " + res.data.snd;
+                audio= document.querySelector('#audio')
+                console.log(res.data.snd)
+                audio.play()
+                let snd = new Audio("data:audio/wav;base64, " + res.data.snd);
+                snd.play()
+                // var data = `data:audio/wav;base64, ${res.data.snd}`
+                // var binary = convertDataURIToBinary(data);
+                // var blob = new Blob([binary], { type: 'audio/wav' });
+                // var blobUrl = URL.createObjectURL(blob);
+                // // Lấy thẻ audio và đặt src là URL của âm thanh
+                // var audioElement = document.getElementById('audio');
+                // audioElement.src = blobUrl;
+                // const data = res.data
+                // var audioData = new Uint16Array(data.length);
+                // for (var i = 0; i < data.length; ++i) {
+                //     audioData[i] = data.charCodeAt(i);
+                // }
+                // console.log(data.length)
+                // console.log('\n', audioData)
+                // // Tạo URL cho dữ liệu âm thanh
+                // var blob = new Blob([audioData], { type: 'audio/wav' });
+                // var audioUrl = URL.createObjectURL(blob);
+                // // Lấy thẻ audio và đặt src là URL của âm thanh
+                // var audioElement = document.getElementById('audio');
+                // audioElement.src = audioUrl;
+                // (async () => {
+                //     let { snd: b64buf } = await res.json()
+                //     document.querySelector('audio').src = "data:audio/wav;base64, " + b64buf
+                // })().catch(er=>console.log(er))
+            }).catch(err => {
+                console.log('err', err)
             })
         })
+        function convertDataURIToBinary(dataURI) {
+            var BASE64_MARKER = ';base64,';
+            var base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length;
+            var base64 = dataURI.substring(base64Index);
+            var raw = window.atob(base64);
+            var rawLength = raw.length;
+            var array = new Uint16Array(new ArrayBuffer(rawLength));
+
+            for (i = 0; i < rawLength; i++) {
+                array[i] = raw.charCodeAt(i);
+            }
+            console.log(array.length)
+            return array;
+        }
 
     </script>
 </body>
