@@ -9,10 +9,14 @@ import soundfile as sf
 import io
 import librosa
 from werkzeug.datastructures import FileStorage
+import glob
 from predict import predict
 from deepxi.se_batch import Batch
 app = Flask(__name__)
-
+def delete(path):
+    files = glob.glob('./upload/*')
+    for f in files:
+        os.remove(f)
 @app.route('/')
 def hello_world():
     """Returns a simple 'Hello, world!' message."""
@@ -25,7 +29,6 @@ def upload_file():
     file = request.files['file']
     if file.filename == '':
         return jsonify({'error': 'No selected file'})
-
     if file:
         try:
             file.save(os.path.join('./upload/', file.filename))
@@ -34,10 +37,10 @@ def upload_file():
             signal_resampled = librosa.resample(signal_mono,orig_sr = sr,target_sr= 16000)
             output_path = os.path.join('./upload/', file.filename.split(".")[0] + ".wav")
             sf.write(output_path, signal_resampled, 16000, format= 'wav')
-            os.remove('./upload/'+file.filename)
             test_x, test_x_len, _, test_x_base_names = Batch('./upload')
-            prediction = predict(test_x,test_x_len,test_x_base_names)
-            os.remove('./upload/'+file.filename.split(".")[0] + ".wav")
+            predict(test_x,test_x_len,test_x_base_names)
+            delete('./upload')
+            # os.remove('./upload/'+file.filename.split(".")[0] + ".wav")
             # wav = np.squeeze(prediction)
             # if isinstance(wav[0], np.float32):
             #     wav = np.asarray(np.multiply(wav, 32768.0), dtype=np.int16)
@@ -51,6 +54,7 @@ def upload_file():
             return jsonify({'source': '/static/predicts/mhanet-1.1c/e200/y/mmse-lsa/'+file.filename.split(".")[0] + ".wav"})
         except Exception as e:
             return jsonify({'error': str(e)})
+
 if __name__ == '__main__':
     app.run(port=8080,debug=True)
 class Test:
