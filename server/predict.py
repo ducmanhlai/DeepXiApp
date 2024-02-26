@@ -87,7 +87,7 @@ deepxi = DeepXi(
     map_params=[None, None],
 )
 def predict(test_x,test_x_len=1,test_x_base_names=['defaul']):
-    a= deepxi.infer(
+    deepxi.infer(
 		test_x=test_x,
 		test_x_len=test_x_len,
 		test_x_base_names=test_x_base_names,
@@ -95,5 +95,5 @@ def predict(test_x,test_x_len=1,test_x_base_names=['defaul']):
 		model_path='../model/mhanet-1.1c',
 		out_type='y',
 		gain='mmse-lsa',
-		out_path='../test/out')
-    return a
+		out_path='./static/predicts')
+  

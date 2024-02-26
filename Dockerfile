@@ -21,4 +21,4 @@ RUN pip install -r requirements.txt
 
 # Default command when container starts
 CMD ["bash"]
-EXPOSE 80
+EXPOSE 8080
