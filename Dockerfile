@@ -20,5 +20,5 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # Default command when container starts
-CMD ["bash"]
+# CMD cd server && python3 server.py
 EXPOSE 8080
