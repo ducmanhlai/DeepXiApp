@@ -2,6 +2,7 @@ tensorflow
 tensorflow-addons
 tqdm
 pysoundfile
+pydub
 scipy
 librosa
 flask

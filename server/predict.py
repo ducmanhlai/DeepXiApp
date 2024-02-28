@@ -86,7 +86,7 @@ deepxi = DeepXi(
     map_type="DBNormalCDF",
     map_params=[None, None],
 )
-def predict(test_x,test_x_len=1,test_x_base_names=['defaul']):
+def predict(test_x,test_x_len,test_x_base_names):
     deepxi.infer(
 		test_x=test_x,
 		test_x_len=test_x_len,
