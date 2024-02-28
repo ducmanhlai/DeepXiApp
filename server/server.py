@@ -34,7 +34,7 @@ def upload_file():
             signal_mono= librosa.to_mono(audio)
             signal_resampled = librosa.resample(signal_mono,orig_sr = sr,target_sr= 16000)
             duration  = librosa.get_duration(y=signal_resampled,sr=16000)
-            if duration < 23:
+            if duration <= 23:
                     output_path = os.path.join('./upload/', file.filename.split(".")[0] +'16000'+ ".wav")
                     sf.write(output_path, signal_resampled, 16000, format= 'wav')
                     os.remove('./upload/'+file.filename)
@@ -70,23 +70,15 @@ def upload_file():
                 
                 # delete('./upload')
                 predicted_audio = np.array([])
-                for filename in os.listdir('./static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa'):
-                        if filename.endswith(".wav"):  # Chỉ xử lý các file có định dạng WAV, bạn có thể thay đổi tùy theo định dạng audio của bạn
-                            file_path = os.path.join('./static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa', filename)
-                            a, sr = librosa.load(file_path)
-                            predicted_audio = np.concatenate(predicted_audio,a)
-                
-
-# Tạo một đoạn audio từ mảng numpy đã predict
-           
-
-# Lưu đoạn audio đã được nối lại vào một file mới
+                for filename in range(1,len(os.listdir('./static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa'))+1):
+                            file_path = os.path.join('./static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa', str(filename)+ '.wav')
+                            a, s = librosa.load(file_path)
+                            predicted_audio = np.concatenate((predicted_audio,a))
                 output_path = './static/predicts/mhanet-1.1c/e200/y/mmse-lsa/'+file.filename.split(".")[0]+'16000' + ".wav"
                 wav = np.squeeze(predicted_audio)
                 if isinstance(wav[0], np.float32): wav = np.asarray(np.multiply(wav, 32768.0), dtype=np.int16)
-                sf.write(output_path, wav, 16000) 
+                sf.write(output_path, wav, s,format= 'wav') 
                 return jsonify({'source': '/static/predicts/mhanet-1.1c/e200/y/mmse-lsa/'+file.filename.split(".")[0]+'16000' + ".wav"})
-              
         except Exception as e:
             return jsonify({'error': str(e)})
 
