@@ -1,4 +1,4 @@
-
+from pathlib import Path
 from flask import Flask,render_template,request, jsonify, send_file
 import numpy as np
 from scipy.io import wavfile
@@ -54,15 +54,39 @@ def upload_file():
                     # return res
                     return jsonify({'source': '/static/predicts/mhanet-1.1c/e200/y/mmse-lsa/'+file.filename.split(".")[0]+'16000' + ".wav"})
             else :
-                segment_length_ms = 23000
-                predicted_audio_parts = []
-# Chia đoạn audio dài thành các phần có độ dài 23 giây và predict từng phần
-                for start_time in range(0, len(long_audio), segment_length_ms):
-                    end_time = min(start_time + segment_length_ms, len(long_audio))
-                    audio_segment = long_audio[start_time:end_time]
-                    predicted_audio_part = predict_audio_segment(audio_segment)
-                    predicted_audio_parts.append(predicted_audio_part)
-                    return 0
+                os.remove('./upload/'+file.filename)
+                name= file.filename.split(".")[0] +'16000'
+                segment_length_ms = 23*16000
+                count = 1
+                for start_time in range(0, len(signal_resampled), segment_length_ms):
+                    end_time = min(start_time + segment_length_ms, len(signal_resampled))
+                    audio_segment = signal_resampled[start_time:end_time]
+                    Path("./upload/"+name).mkdir(parents=True, exist_ok=True)
+                    output_path = os.path.join('./upload/', name + '/' +str(count)+ '.wav')
+                    sf.write(output_path, audio_segment, 16000, format= 'wav')
+                    count+=1
+                test_x, test_x_len, _, test_x_base_names = Batch('./upload/'+name)
+                predict(test_x,test_x_len,test_x_base_names,name)
+                
+                # delete('./upload')
+                predicted_audio = np.array([])
+                for filename in os.listdir('./static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa'):
+                        if filename.endswith(".wav"):  # Chỉ xử lý các file có định dạng WAV, bạn có thể thay đổi tùy theo định dạng audio của bạn
+                            file_path = os.path.join('./static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa', filename)
+                            a, sr = librosa.load(file_path)
+                            predicted_audio = np.concatenate(predicted_audio,a)
+                
+
+# Tạo một đoạn audio từ mảng numpy đã predict
+           
+
+# Lưu đoạn audio đã được nối lại vào một file mới
+                output_path = './static/predicts/mhanet-1.1c/e200/y/mmse-lsa/'+file.filename.split(".")[0]+'16000' + ".wav"
+                wav = np.squeeze(predicted_audio)
+                if isinstance(wav[0], np.float32): wav = np.asarray(np.multiply(wav, 32768.0), dtype=np.int16)
+                sf.write(output_path, wav, 16000) 
+                return jsonify({'source': '/static/predicts/mhanet-1.1c/e200/y/mmse-lsa/'+file.filename.split(".")[0]+'16000' + ".wav"})
+              
         except Exception as e:
             return jsonify({'error': str(e)})
 

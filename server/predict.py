@@ -86,7 +86,9 @@ deepxi = DeepXi(
     map_type="DBNormalCDF",
     map_params=[None, None],
 )
-def predict(test_x,test_x_len,test_x_base_names):
+def predict(test_x,test_x_len,test_x_base_names,name=0):
+    output_path = f'./static/predicts/{name}' if name else './static/predicts'
+    # print('enter getJSONReuslt '+output_path, flush=True)
     deepxi.infer(
 		test_x=test_x,
 		test_x_len=test_x_len,
@@ -95,5 +97,6 @@ def predict(test_x,test_x_len,test_x_base_names):
 		model_path='../model/mhanet-1.1c',
 		out_type='y',
 		gain='mmse-lsa',
-		out_path='./static/predicts')
+		out_path=output_path
+  )
   
