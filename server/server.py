@@ -13,7 +13,7 @@ from predict import predict
 from deepxi.se_batch import Batch
 app = Flask(__name__)
 def delete(path):
-    files = glob.glob('./upload/*')
+    files = glob.glob(f'{path}/*')
     for f in files:
         os.remove(f)
 @app.route('/')
@@ -41,17 +41,6 @@ def upload_file():
                     test_x, test_x_len, _, test_x_base_names = Batch('./upload')
                     predict(test_x,test_x_len,test_x_base_names)
                     delete('./upload')
-                    # os.remove('./upload/'+file.filename.split(".")[0] + ".wav")
-                    # wav = np.squeeze(prediction)
-                    # if isinstance(wav[0], np.float32):
-                    #     wav = np.asarray(np.multiply(wav, 32768.0), dtype=np.int16)
-                    # audio_data = base64.b64encode(wav).decode('UTF-8')
-                    # return jsonify({"audio_data": audio_data})
-                    # data = {"snd": audio_data}
-                    # res = app.response_class(response=json.dumps(data),
-                    #         status=200,
-                    #         mimetype='audio/wav')
-                    # return res
                     return jsonify({'source': '/static/predicts/mhanet-1.1c/e200/y/mmse-lsa/'+file.filename.split(".")[0]+'16000' + ".wav"})
             else :
                 os.remove('./upload/'+file.filename)
@@ -68,16 +57,22 @@ def upload_file():
                 test_x, test_x_len, _, test_x_base_names = Batch('./upload/'+name)
                 predict(test_x,test_x_len,test_x_base_names,name)
                 
-                # delete('./upload')
-                predicted_audio = np.array([])
-                for filename in range(1,len(os.listdir('./static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa'))+1):
-                            file_path = os.path.join('./static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa', str(filename)+ '.wav')
-                            a, s = librosa.load(file_path)
-                            predicted_audio = np.concatenate((predicted_audio,a))
-                output_path = './static/predicts/mhanet-1.1c/e200/y/mmse-lsa/'+file.filename.split(".")[0]+'16000' + ".wav"
-                wav = np.squeeze(predicted_audio)
-                if isinstance(wav[0], np.float32): wav = np.asarray(np.multiply(wav, 32768.0), dtype=np.int16)
-                sf.write(output_path, wav, s,format= 'wav') 
+                delete('./upload/'+name)
+                # predicted_audio = np.array([])
+                # for filename in range(1,len(os.listdir('./static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa'))+1):
+                #             file_path = os.path.join('./static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa', str(filename)+ '.wav')
+                #             a, s = librosa.load(file_path)
+                #             predicted_audio = np.concatenate((predicted_audio,a))
+                # output_path = './static/predicts/mhanet-1.1c/e200/y/mmse-lsa/'+file.filename.split(".")[0]+'16000' + ".wav"
+                # wav = np.squeeze(predicted_audio)
+                # if isinstance(wav[0], np.float32): wav = np.asarray(np.multiply(wav, 32768.0), dtype=np.int16)
+                # sf.write(output_path, wav, s,format= 'wav') 
+                combines_sounds =   AudioSegment.from_wav('./static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa/'+ str(1)+ '.wav')
+                for filename in range(2,count):
+                        file_path = os.path.join('./static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa', str(filename)+ '.wav')
+                        a =  AudioSegment.from_wav(file_path)
+                        combines_sounds = combines_sounds+a
+                combines_sounds.export('./static/predicts/mhanet-1.1c/e200/y/mmse-lsa/'+file.filename.split(".")[0]+'16000' + ".wav",format="wav")
                 return jsonify({'source': '/static/predicts/mhanet-1.1c/e200/y/mmse-lsa/'+file.filename.split(".")[0]+'16000' + ".wav"})
         except Exception as e:
             return jsonify({'error': str(e)})
