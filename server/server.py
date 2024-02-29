@@ -70,6 +70,7 @@ def upload_file():
                 predict(test_x, test_x_len, test_x_base_names, name)
 
                 delete('./upload/'+name)
+                os.rmdir('./upload/'+name)
                 # predicted_audio = np.array([])
                 # for filename in range(1,len(os.listdir('./static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa'))+1):
                 #             file_path = os.path.join('./static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa', str(filename)+ '.wav')

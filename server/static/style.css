@@ -31,3 +31,18 @@
         transform: rotate(360deg);
     }
 }
+a.button {
+    display: inline-block;
+    background-color: #007bff; 
+    color: #fff; 
+    padding: 10px 20px; 
+    text-decoration: none;
+    border: none;
+    border-radius: 5px; 
+    cursor: pointer;
+    transition: background-color 0.3s; 
+}
+
+a.button:hover {
+    background-color: #0056b3; 
+}
