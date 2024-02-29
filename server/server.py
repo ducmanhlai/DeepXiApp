@@ -87,6 +87,7 @@ def upload_file():
                         './static/predicts/'+name+'/mhanet-1.1c/e200/y/mmse-lsa', str(filename) + '.wav')
                     a = AudioSegment.from_wav(file_path)
                     combines_sounds = combines_sounds+a
+                Path("./static/predicts/mhanet-1.1c/e200/y/mmse-lsa/").mkdir(parents=True, exist_ok=True)
                 combines_sounds.export('./static/predicts/mhanet-1.1c/e200/y/mmse-lsa/' +
                                        file.filename.split(".")[0]+'16000' + ".wav", format="wav")
                 return jsonify({'source': '/static/predicts/mhanet-1.1c/e200/y/mmse-lsa/'+file.filename.split(".")[0]+'16000' + ".wav"})
