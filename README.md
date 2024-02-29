@@ -1,1 +1,5 @@
-đang fix
+-	Chạy project:
+-	B1: git clone  https://github.com/ducmanhlai/DeepXiApp.
+-	B2: docker build -t ‘tên muốn đặt’.
+- B3: docker run –p 3000:3000 ‘tên image’
+- B4: mở trình duyệt và truy cập http://localhost:3000
